@@ -1,0 +1,107 @@
+单列模式
+  单例模式要求只能创建一个对象实例。
+  通常的写法是声明私有的构造函数，提供静态方法获取单例的对象实例。
+  常见的单例写法就是饿汉式、懒汉式、双重加锁验证、静态内部类和枚举的方式，
+
+  饿汉式
+  饿汉式的写法通常静态成员变量已经是初始化好的，
+  优点是可以不加锁就获取到对象实例，线程安全，
+  缺点在于不是延加载，稍微存在内存的浪费，因为如果初始化的逻辑较为复杂，
+  比如存在网络请求或者一些复杂的逻辑在内，就会产生内存的浪费
+    public class Singleton{
+      private static Singleton instance = new Singleton();
+      private Singleton(){};
+      public static Singleton getInstance(){
+          return instance;
+      }
+    }
+
+  懒汉式
+  懒汉式的写法解决了饿汉式浪费内存的问题，在真正需要获取实例对象的才去执行初始化。
+  第一种就是不加锁的写法，很显然这样是肯定不行的，正常的方式一般都是通过同步锁的方式加锁获取实例对象。
+  但是这种实现方式在之前的JDK版本synchronized没有锁优化的情况每次获取单例对象性能存在很大的问题，于是乎有了DCL的写法
+    public class Singleton{
+      private static Singleton instance;
+      private Singleton(){};
+      public static synchronized Singleton getInstance(){
+        if(instance == null){
+            instance = new Singleton();
+        }
+        return instance;
+      }
+    }
+
+  双重加锁验证DCL
+  先判断一次空，真的为空再执行加锁，然后再判断一次。
+  这样的话，只有在实例对象是空的情况才会去加锁创建对象，性能问题得到了一定程度上的解决，也不会和饿汉一样有内存浪费的问题。
+    public class Singleton{
+      private volatile static Singleton instance;
+      private Singleton(){};
+      public static Singleton getInstance(){
+        if(instance == null){
+            synchronized (Singleton.class){
+                if(instance == null){
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+      }
+    }
+  从CPU的角度来看，instance = new Instance()可以分为分为几个步骤：
+    1.分配对象内存空间
+    2.执行构造方法，对象初始化
+    3.instance指向分配的内存地址
+  实际上，由于指令重排的问题，2、3的步骤可能会发生重排序，那么问题就发生了。
+  instance先被指向内存地址，然后再执行初始化，
+  如果此时另外一个线程来访问getInstance方法，就会拿到instance不是null，最后拿到的将是一个没有被完全初始化的对象！
+
+  静态内部类
+  通过JVM来保证创建单例对象的线程安全和唯一性，是比较好的办法。
+  Singleton类加载的时候，SingletonHolder不会加载，只有在调用getInstance方法的时候才会执行初始化，
+  这样既起到了懒加载的作用，同时又使用到了JVM类加载机制，保证了单例对象初始化的线程安全。
+    public class Singleton{
+      private static class SingletonHolder{
+          private static final Singleton SINGLETON = new Singleton();
+      }
+      private Singleton(){};
+      public static final Singleton getInstance(){
+
+          return SingletonHolder.SINGLETON;
+      }
+    }
+
+  枚举
+  单例模式的最佳实现方式。
+    public enum Singleton {
+      ONE(1, "1"),
+      TWO(2, "2"),
+      THREE(3, "3");
+
+      private Integer code;
+      private String desc;
+
+      Singleton(Integer code, String desc) {
+          this.code = code;
+          this.desc = desc;
+      }
+    }
+    通过最终生成的字节码，我们其实发现本质上枚举的初始化通过static代码块来进行初始化。
+    考虑下类加载的几个步骤，加载->验证->准备->解析->初始化，加载--链接--初始化
+    最终初始化就是执行static代码块，而static代码块是绝对线程安全的，只能由JVM来调度，这样保证了线程安全。
+
+  反射破坏单例 参见Singleton2.java
+    除了枚举之外，其他的几种方式都可以通过反射的方式达到破坏单例的目的，就随便以一个实现方式来举例，这里最终的输出结果是false。
+    如果拿去尝试反射创建枚举对象的话，则是会报错，可以自己动手尝试一下。 
+
+  序列化 参见Singleton3.java
+  对上面的饿汉方法实现序列化，然后得到的结果是false，序列化前后对象发生了改变。
+  所以很明显我们发现了最终实际上这里通过反射创建了一个新的对象，isInstantiable实际代表的应该是类或者属性是序列化的，那么久就返回true，我们这里肯定是true，所以最终产生了一个新的对象。
+  枚举为啥可以防止这个问题？枚举的实现方式不太一样而已，同样跟踪到枚举部分的实现逻辑。
+  下图中红框标注的部分就是枚举类型去实现反序列化的逻辑，最终只是通过valueOf方法查找枚举，不存在新建一个对象的逻辑。
+
+  那么，怎么防止其他方式序列化对单例的破坏？再往下看看源码，红框标注的意思只要有readResolve方法就可以解决问题了。
+  实际上，最终解决方案也很简单，单例类加上方法即可
+    private Object readResolve(){
+      return instance;
+    }
