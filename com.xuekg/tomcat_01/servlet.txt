@@ -1,0 +1,62 @@
+Servlet 接口
+  public interface Servlet {
+      public void init(ServletConfig config) throws ServletException;
+
+      public ServletConfig getServletConfig();
+
+      public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException;
+
+      public String getServletInfo();
+
+      public void destroy();
+  }
+HTTP 协议中的请求和响应就是对应了 HttpServletRequest 和 HttpServletResponse 这两个类
+HttpServletRequest 来获取所有请求相关的信息，包括请求路径、Cookie、HTTP 头、请求参数等。
+我们还可以通过 HttpServletRequest 来创建和获取 Session。
+而 HttpServletResponse 是用来封装 HTTP 响应的。
+
+Spring MVC 中的 DispatcherServlet，就是在 init 方法里创建了自己的 Spring 容器
+
+ServletConfig 的作用就是封装 Servlet 的初始化参数。你可以在 web.xml 给 Servlet 配置参数，
+并在程序里通过 getServletConfig 方法拿到这些参数。
+
+Servlet 容器
+
+Web 应用
+  Servlet 容器会实例化和调用 Servlet，那 Servlet 是怎么注册到 Servlet 容器中的呢？
+  一般来说，我们是以 Web 应用程序的方式来部署 Servlet 的，而根据 Servlet 规范，
+  Web 应用程序有一定的目录结构，在这个目录下分别放置了 Servlet 的类文件、配置文件以及静态资源，
+  Servlet 容器通过读取配置文件，就能找到并加载 Servlet。Web 应用的目录结构大概是下面这样的：
+  | -  MyWebApp
+        | -  WEB-INF/web.xml        -- 配置文件，用来配置 Servlet 等
+        | -  WEB-INF/lib/           -- 存放 Web 应用所需各种 JAR 包
+        | -  WEB-INF/classes/       -- 存放你的应用类，比如 Servlet 类
+        | -  META-INF/              -- 目录存放工程的一些信息
+  ServletContext这个接口来对应一个 Web 应用
+  一个 Web 应用可能有多个 Servlet，这些 Servlet 可以通过全局的 ServletContext 来共享数据，
+  这些数据包括 Web 应用的初始化参数、Web 应用目录下的文件资源等
+
+扩展机制 Servlet 规范提供了两种扩展机制：Filter和Listener
+  Filter是过滤器，这个接口允许你对请求和响应做一些统一的定制化处理，比如你可以根据请求的频率来限制访问，
+  或者根据国家地区的不同来修改响应内容。过滤器的工作原理是这样的：Web 应用部署完成后，
+  Servlet 容器需要实例化 Filter 并把 Filter 链接成一个 FilterChain。
+  当请求进来时，获取第一个 Filter 并调用 doFilter 方法，doFilter 方法负责调用这个 FilterChain 中的下一个 Filter。
+
+  Listener是监听器，这是另一种扩展机制。当 Web 应用在 Servlet 容器中运行时，Servlet 容器内部会不断的发生各种事件，
+  如 Web 应用的启动和停止、用户请求到达等。 Servlet 容器提供了一些默认的监听器来监听这些事件，当事件发生时，
+  Servlet 容器会负责调用监听器的方法。当然，你可以定义自己的监听器去监听你感兴趣的事件，将监听器配置在 web.xml 中。
+  比如 Spring 就实现了自己的监听器，来监听 ServletContext 的启动事件，目的是当 Servlet 容器启动时，
+  创建并初始化全局的 Spring 容器。
+
+  Tomcat&Jetty在启动过程中触发容器初始化事件，Spring的ContextLoaderListener会监听到这个事件，
+  它的contextInitialized方法会被调用，在这个方法中，Spring会初始化全局的Spring根容器，这个就是Spring的IoC容器，
+  IoC容器初始化完毕后，Spring将其存储到ServletContext中，便于以后来获取。
+
+  Tomcat&Jetty在启动过程中还会扫描Servlet，一个Web应用中的Servlet可以有多个，以SpringMVC中的DispatcherServlet为例，
+  这个Servlet实际上是一个标准的前端控制器，用以转发、匹配、处理每个Servlet请求。
+  Servlet一般会延迟加载，当第一个请求达到时，Tomcat&Jetty发现DispatcherServlet还没有被实例化，
+  就调用DispatcherServlet的init方法，DispatcherServlet在初始化的时候会建立自己的容器，叫做SpringMVC 容器，
+  用来持有Spring MVC相关的Bean。同时，Spring MVC还会通过ServletContext拿到Spring根容器，
+  并将Spring根容器设为SpringMVC容器的父容器，请注意，Spring MVC容器可以访问父容器中的Bean，
+  但是父容器不能访问子容器的Bean， 也就是说Spring根容器不能访问SpringMVC容器里的Bean。
+  说的通俗点就是，在Controller里可以访问Service对象，但是在Service里不可以访问Controller对象

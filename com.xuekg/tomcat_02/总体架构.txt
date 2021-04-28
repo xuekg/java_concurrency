@@ -1,0 +1,81 @@
+Tomcat 总体架构
+  Tomcat 要实现 2 个核心功能：
+    1.处理 Socket 连接，负责网络字节流与 Request 和 Response 对象的转化。
+    2.加载和管理 Servlet，以及具体处理 Request 请求。
+   Tomcat 设计了两个核心组件连接器（Connector）和容器（Container）来分别做这两件事情。
+   连接器负责对外交流，容器负责内部处理。
+
+Tomcat 支持的 I/O 模型有：
+  NIO：非阻塞 I/O，采用 Java NIO 类库实现。
+  NIO2：异步 I/O，采用 JDK 7 最新的 NIO2 类库实现。
+  APR：采用 Apache 可移植运行库实现，是 C/C++ 编写的本地库。
+
+Tomcat 支持的应用层协议有：
+  HTTP/1.1：这是大部分 Web 应用采用的访问协议。
+  AJP：用于和 Web 服务器集成（如 Apache）。
+  HTTP/2：HTTP 2.0 大幅度的提升了 Web 性能。
+
+最顶层是 Server，这里的 Server 指的就是一个 Tomcat 实例。
+一个 Server 中有一个或者多个 Service，一个 Service 中有多个连接器和一个容器。
+连接器与容器之间通过标准的 ServletRequest 和 ServletResponse 通信。
+
+连接器
+  监听网络端口。
+  接受网络连接请求。
+  读取请求网络字节流。
+  根据具体应用层协议（HTTP/AJP）解析字节流，生成统一的 Tomcat Request 对象。
+  将 Tomcat Request 对象转成标准的 ServletRequest。
+  调用 Servlet 容器，得到 ServletResponse。
+  将 ServletResponse 转成 Tomcat Response 对象。
+  将 Tomcat Response 转成网络字节流。
+  将响应字节流写回给浏览器。
+
+通过分析连接器的详细功能列表，我们发现连接器需要完成 3 个高内聚的功能：
+  网络通信。
+  应用层协议解析。
+  Tomcat Request/Response 与 ServletRequest/ServletResponse 的转化。
+因此 Tomcat 的设计者设计了 3 个组件来实现这 3 个功能，分别是 EndPoint、Processor 和 Adapter。
+
+EndPoint 负责提供字节流给 Processor，Processor 负责提供 Tomcat Request 对象给 Adapter，
+Adapter 负责提供 ServletRequest 对象给容器。Endpoint 和 Processor 放在一起抽象成了 ProtocolHandler 组件
+
+由于 I/O 模型和应用层协议可以自由组合，比如 NIO + HTTP 或者 NIO2 + AJP。
+Tomcat 的设计者将网络通信和应用层协议解析放在一起考虑，设计了一个叫 ProtocolHandler 的接口来封装这两种变化点。
+各种协议和通信模型的组合有相应的具体实现类。比如：Http11NioProtocol 和 AjpNioProtocol。
+
+ProtocolHandler 组件
+  EndPoint
+    通信监听的接口，是具体的 Socket 接收和发送处理器，是对传输层的抽象，因此 EndPoint 是用来实现 TCP/IP 协议的。
+    是一个接口，对应的抽象实现类是 AbstractEndpoint，而 AbstractEndpoint 的具体子类，比如在 NioEndpoint 和 Nio2Endpoint 中，
+    有两个重要的子组件：Acceptor 和 SocketProcessor。
+    其中 Acceptor 用于监听 Socket 连接请求。SocketProcessor 用于处理接收到的 Socket 请求，它实现 Runnable 接口，
+    在 Run 方法里调用协议处理组件 Processor 进行处理。
+    为了提高处理能力，SocketProcessor 被提交到线程池来执行。而这个线程池叫作执行器（Executor)。
+  Processor
+    如果说 EndPoint 是用来实现 TCP/IP 协议的，那么 Processor 用来实现 HTTP 协议，Processor 接收来自 EndPoint 的 Socket，
+    读取字节流解析成 Tomcat Request 和 Response 对象，并通过 Adapter 将其提交到容器处理，Processor 是对应用层协议的抽象。
+    Processor 是一个接口，定义了请求的处理等方法。它的抽象实现类 AbstractProcessor 对一些协议共有的属性进行封装，没有对方法进行实现。
+    具体的实现有 AJPProcessor、HTTP11Processor 等，这些具体实现类实现了特定协议的解析方法和请求处理方式。
+
+  参考connector.png图片
+  从图中我们看到，EndPoint 接收到 Socket 连接后，生成一个 SocketProcessor 任务提交到线程池去处理，SocketProcessor 的 Run 方法会调用 Processor 组件去解析应用层协议，
+  Processor 通过解析生成 Request 对象后，会调用 Adapter 的 Service 方法。
+
+Adapter 组件
+  由于协议不同，客户端发过来的请求信息也不尽相同，Tomcat 定义了自己的 Request 类来“存放”这些请求信息。ProtocolHandler 接口负责解析请求并生成 Tomcat Request 类。
+  但是这个 Request 对象不是标准的 ServletRequest，也就意味着，不能用 Tomcat Request 作为参数来调用容器。
+  Tomcat 设计者的解决方案是引入 CoyoteAdapter，这是适配器模式的经典运用，连接器调用 CoyoteAdapter 的 Sevice 方法，
+  传入的是 Tomcat Request 对象，CoyoteAdapter 负责将 Tomcat Request 转成 ServletRequest，再调用容器的 Service 方法。
+
+Tomcat 的整体架构包含了两个核心组件连接器和容器。连接器负责对外交流，容器负责内部处理。
+连接器用 ProtocolHandler 接口来封装通信协议和 I/O 模型的差异，ProtocolHandler 内部又分为 EndPoint 和 Processor 模块，
+EndPoint 负责底层 Socket 通信，Proccesor 负责应用层协议解析。连接器通过适配器 Adapter 调用容器。
+
+Tomcat对HTTP请求体采取了延迟解析的策略，也就是说，TomcatRequest对象转化成ServletRequest的时候，请求体的内容都还没读取呢，直到容器处理这个请求的时候才读取的。
+
+tomcat和netty有什么区别呢？为什么netty常常用做底层通讯模块，而tomcat作为web容器呢？
+你可以把Netty理解成Tomcat中的连接器，它们都负责网络通信，都利用了Java NIO非阻塞特性。
+但Netty素以高性能高并发著称，为什么Tomcat不把连接器替换成Netty呢？
+第一个原因是Tomcat的连接器性能已经足够好了，同样是Java NIO编程，套路都差不多。
+第二个原因是Tomcat做为Web容器，需要考虑到Servlet规范，Servlet规范规定了对HTTP Body的读写是阻塞的，因此即使用到了Netty，也不能充分发挥它的优势。
+所以Netty一般用在非HTTP协议和Servlet的场景下。
