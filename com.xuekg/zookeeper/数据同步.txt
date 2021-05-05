@@ -1,0 +1,39 @@
+不同的同步策略，这里我先入为主的给大家介绍一下：
+  DIFF，如果 Follower 的记录和 Leader 的记录相差的不多，使用增量同步的方式将一个一个写请求发送给 Follower
+  TRUNC，这个情况的出现代表 Follower 的 zxid 是领先于当前的 Leader 的（可能是以前的 Leader），
+    需要 Follower 自行把多余的部分给截断，降级到和 Leader 一致
+  SNAP，如果 Follower 的记录和当前 Leader 相差太多，Leader 直接将自己的整个内存数据发送给 Follower
+
+1.1 DIFF
+每一个 ZK 节点在收到写请求后，会维护一个写请求队列（默认是 500 大小，通过 zookeeper.commitLogCount 配置），
+将写请求记录在其中，这个队列中的最早进入的写请求当时的 zxid 就是 minZxid（以下简称 min），
+最后一个进入的写请求的 zxid 就是 maxZxid（以下简称 max），达到上限后，会移除最早进入的写请求，
+知道了这两个值之后，我们来看看 DIFF 是怎么判断的。
+1.1.1 从内存中的写请求队列恢复
+一种情况就是如果当 Follower 通过 ACKEPOCH 上报的 zxid 是在 min 和 max 之间的话，就采用 DIFF 策略进行数据同步。
+我们的例子中 Leader 的 zxid 是 99，说明这个存储 500 个写请求的队列根本没有放满，所以 min 是 1 max 是 99，
+很显然 77 以及 88 是在这个区间内的，那马果果就会为另外两位 Follower 找到他们各自所需要的区间，
+先发送一个 DIFF 给 Follower，然后将一条条的写请求包装成 PROPOSAL 和 COMMIT 的顺序发给他们
+1.1.2 从磁盘文件 log 恢复
+另一种情况是如果 Follower 的 zxid 不在 min 和 max 的区间内时，但当 zookeeper.snapshotSizeFactor 配置大于 0 的话（默认是 0.33），
+会尝试使用 log 进行 DIFF，但是需要同步的 log 文件的总大小不能超过当前最新的 snapshot 文件大小的三分之一（以默认 0.33 为例）的话，
+才可以通过读取 log 文件中的写请求记录进行 DIFF 同步。同步的方法也和上面一样，
+先发送一个 DIFF 给 Follower 然后从 log 文件中找到该 Follower 的区间，再一条条的发送 PROPOSAL 和 COMMIT。
+而 Follower 收到 PROPOSAL 的暗号消息后，就会像处理客户端请求那样去一条条处理，慢慢就会将数据恢复成和 Leader 是一致的。
+
+1.2 SNAP
+马果果的写请求队列在默认配置下记录了 277 至 777 的写请求，又假设现在的场景不满足上面 1.1.2 的情况，
+马果果就知道当前需要通过 SNAP 的情况进行同步了。
+
+马果果会先发送一个 SNAP 的请求给马小云和马小腾让他们准备起来
+紧接着就会当前内存中的数据整个序列化（和 snapshot 文件是一样的）然后一起发送给马小云和马小腾。
+
+而马小云和马小腾收到马果果发来的整个 snapshot 之后会先清空自己当前的数据库的所有信息，
+接着直接将收到的 snapshot 反序列化就完成了整个内存数据的恢复。
+1.3 TRUNC
+
+2.3 小结
+  .Follower 和 Observer 同步数据的方式一共有三种：DIFF、SNAP、TRUNC
+  .DIFF 需要 Follower 或 Observer 和 Leader 的数据相差在 min 和 max 范围内，或者配置了允许从 log 文件中恢复
+  .TRUNC 是当 Follower 或 Observer 的 zxid 比 Leader 还要大的时候，该节点需要主动删除多余 zxid 相关的数据，降级至 Leader 一致
+  .SNAP 作为最后的数据同步手段，由 Leader 直接将内存数据整个序列化完并发送给 Follower 或 Observer，以达到恢复数据的目的

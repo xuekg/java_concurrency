@@ -1,0 +1,16 @@
+内存
+  ZK 的设计是优先将数据存入磁盘，再去修改内存中的数据保证尽可能的提升数据的可靠性。
+磁盘文件
+  ZK 的开发者给 ZK 设计了两种磁盘文件，对应的路径分别是 zoo.cfg 配置中的 dataDir 和 dataLogDir 这两项目录的配置。
+  为了之后的描述清楚，我给这两种磁盘文件起了名字：
+   dataDir 对应 snapshot，dataLogDir 对应 log，
+   log 就是的是 小S(Sync) 工作中的归档，snapshot 就是的是 小S(Sync) 工作中的快照。
+
+  log 是负责顺序记录每一个写请求到文件，snapshot 则是直接将整个内存对象持久化至文件中
+
+今天我们介绍了关于 ZK 持久化的知识：
+  .ZK 会持久化到磁盘的文件有两种：log 和 snapshot
+  .log 负责记录每一个写请求
+  .snapshot 负责对当前整个内存数据进行快照
+  .恢复数据的时候，会先读取最新的 snapshot 文件
+  .然后在根据 snapshot 最大的 zxid 去搜索符合条件的 log 文件，再通过逐条读取写请求来恢复剩余的数据
