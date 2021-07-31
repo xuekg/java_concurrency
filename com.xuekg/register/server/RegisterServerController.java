@@ -21,6 +21,7 @@ public class RegisterServerController {
         RegisterResponse registerResponse = new RegisterResponse();
 
         try {
+            // 在注册表中加入这个服务实例
             ServiceInstance serviceInstance = new ServiceInstance();
             serviceInstance.setHostname(registerRequest.getHostname());
             serviceInstance.setIp(registerRequest.getIp());
@@ -29,6 +30,15 @@ public class RegisterServerController {
             serviceInstance.setServiceName(registerRequest.getServiceName());
 
             registry.register(serviceInstance);
+
+            // 更新自我保护机制的阈值-硬编码
+            synchronized (SelfProtectionPolicy.class) {
+                SelfProtectionPolicy selfProtectionPolicy = SelfProtectionPolicy.getInstance();
+                selfProtectionPolicy.setExpectedHeartbeatRate(
+                        selfProtectionPolicy.getExpectedHeartbeatRate() + 2);
+                selfProtectionPolicy.setExpectedHeartbeatThreshold(
+                        (long) (selfProtectionPolicy.getExpectedHeartbeatRate() * 0.85));
+            }
 
             registerResponse.setStatus(RegisterResponse.SUCCESS);
         } catch (Exception e) {
@@ -49,10 +59,15 @@ public class RegisterServerController {
         HeartbeatResponse heartbeatResponse = new HeartbeatResponse();
 
         try {
+            // 对服务实例进行续约
             ServiceInstance serviceInstance = registry.getServiceInstance(
                     heartbeatRequest.getServiceName(),
                     heartbeatRequest.getServiceInstanceId());
             serviceInstance.renew();
+
+            // 记录一下每分钟的心跳的次数
+            HeartbeatMessuredRate heartbeatMessuredRate = new HeartbeatMessuredRate();
+            heartbeatMessuredRate.increment();
 
             heartbeatResponse.setStatus(HeartbeatResponse.SUCCESS);
         } catch (Exception e) {
@@ -70,6 +85,24 @@ public class RegisterServerController {
      */
     public Map<String, Map<String, ServiceInstance>> fetchServiceRegistry() {
         return registry.getRegistry();
+    }
+
+    /**
+     * 服务下线
+     */
+    public void cancel(String serviceName, String serviceInstanceId) {
+        // 从服务注册中摘除实例
+        registry.remove(serviceName, serviceInstanceId);
+
+        // 更新自我保护机制的阈值
+        synchronized (SelfProtectionPolicy.class) {
+            SelfProtectionPolicy selfProtectionPolicy = SelfProtectionPolicy.getInstance();
+            // TODO: 2021/7/31 不用判断是否会出现负数么？
+            selfProtectionPolicy.setExpectedHeartbeatRate(
+                    selfProtectionPolicy.getExpectedHeartbeatRate() - 2);
+            selfProtectionPolicy.setExpectedHeartbeatThreshold(
+                    (long) (selfProtectionPolicy.getExpectedHeartbeatRate() * 0.85));
+        }
     }
 
 }
