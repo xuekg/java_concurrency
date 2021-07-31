@@ -1,0 +1,13 @@
+synchronized 是基于monitor实现的，
+
+wait notify底层原理
+一个对象实例中，有monitor,还有一个wait set,某一个线程调用wait之后，会释放掉锁，然后进入到wait set 中
+
+notify(),唤醒wait set中的一个线程
+notifyAll(),唤醒wait set中的所有线程来抢夺CPU时间片
+
+必须对同一个对象实例来进行加锁、释放锁
+
+wait是需要别人notify的
+wait(timeout)会自动苏醒
+
