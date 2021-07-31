@@ -10,3 +10,8 @@ FSNamesystem，其实是作为NameNode里元数据操作的核心入口，负责
 FSDirectory，专门负责管理内存中的文件目录树
 
 FSEditLog，专门负责管理写入edits log到磁盘文件里去
+
+
+全局txid机制
+
+双缓冲机制
