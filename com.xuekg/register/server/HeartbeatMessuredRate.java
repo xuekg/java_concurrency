@@ -31,18 +31,18 @@ public class HeartbeatMessuredRate {
         return instance;
     }
 
+    private HeartbeatMessuredRate() {
+        Daemon daemon = new Daemon();
+        daemon.setDaemon(true);
+        daemon.start();
+    }
     /**
      * 增加一次最近一分钟的心跳次数
      */
-    public synchronized void increment() {
-        long currentTime = System.currentTimeMillis();
-
-        if (currentTime - latestMinuteTimestamp > 60 * 1000) {
-            latestMinuteHeartbeatRate = 0L;
-            this.latestMinuteTimestamp = System.currentTimeMillis();
+    public void increment() {
+        synchronized(HeartbeatMessuredRate.class) {
+            latestMinuteHeartbeatRate++;
         }
-
-        latestMinuteHeartbeatRate++;
     }
 
     /**
@@ -52,4 +52,25 @@ public class HeartbeatMessuredRate {
         return latestMinuteHeartbeatRate;
     }
 
+    private class Daemon extends Thread {
+
+        @Override
+        public void run() {
+            while(true) {
+                try {
+                    synchronized(HeartbeatMessuredRate.class) {
+                        long currentTime = System.currentTimeMillis();
+                        if(currentTime - latestMinuteTimestamp > 60 * 1000) {
+                            latestMinuteHeartbeatRate = 0L;
+                            latestMinuteTimestamp = System.currentTimeMillis();
+                        }
+                    }
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
 }
