@@ -22,7 +22,7 @@ public class SelfProtectionPolicy {
      * @return
      */
     public Boolean isEnable() {
-        HeartbeatMessuredRate heartbeatMessuredRate = HeartbeatMessuredRate.getInstance();
+        HeartbeatCounter heartbeatMessuredRate = HeartbeatCounter.getInstance();
         long latestMinuteHeartbeatRate = heartbeatMessuredRate.get();
 
         if(latestMinuteHeartbeatRate < this.expectedHeartbeatThreshold) {
