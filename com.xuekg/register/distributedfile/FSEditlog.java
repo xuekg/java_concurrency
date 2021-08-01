@@ -80,11 +80,12 @@ public class FSEditlog {
 
                 // 此时再来一个txid = 9的线程的话，那么他会发现说，已经有线程在等待刷下一批数据到磁盘了
                 // 此时他会直接返回
-                // 假如说此时来一个txid = 6的线程，那么的话，他是不好说的
-                // 他就需要做一些等待，同时要释放掉锁
                 if (isWaitSync) {
                     return;
                 }
+                // 假如说此时来一个txid = 6的线程，那么的话，他是不好说的
+                // 他就需要做一些等待，同时要释放掉锁
+
                 // 比如说此时可能是txid = 15的线程在这里等待
                 isWaitSync = true;
                 while (isSyncRunning) {
