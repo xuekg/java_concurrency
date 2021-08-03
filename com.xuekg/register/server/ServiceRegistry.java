@@ -1,6 +1,7 @@
 package register.server;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -10,14 +11,13 @@ import java.util.Map;
  */
 public class ServiceRegistry {
 
+    public static final Long RECENTLY_CHANGED_ITEM_CHECK_INTERVAL = 3000L;
+    public static final Long RECENTLY_CHANGED_ITEM_EXPIRED = 3 * 60 * 1000L;
+
     /**
      * 注册表是一个单例
      */
     private static ServiceRegistry instance = new ServiceRegistry();
-
-    private ServiceRegistry() {
-
-    }
 
     /**
      * 核心的内存数据结构：注册表
@@ -29,11 +29,39 @@ public class ServiceRegistry {
             new HashMap<String, Map<String, ServiceInstance>>();
 
     /**
+     * 最近变更的服务实例的队列
+     */
+    private LinkedList<RecentlyChangedServiceInstance> recentlyChangedQueue =
+            new LinkedList<RecentlyChangedServiceInstance>();
+
+    /**
+     * 构造函数
+     */
+    private ServiceRegistry() {
+        // 启动后台线程监控最近变更的队列
+        RecentlyChangedQueueMonitor recentlyChangedQueueMonitor =
+                new RecentlyChangedQueueMonitor();
+        recentlyChangedQueueMonitor.setDaemon(true);
+        recentlyChangedQueueMonitor.start();
+    }
+    /**
      * 服务注册
      *
      * @param serviceInstance 服务实例
      */
     public synchronized void register(ServiceInstance serviceInstance) {
+        System.out.println("服务注册......【" + serviceInstance + "】");
+
+        // 将服务实例放入最近变更的队列中
+        RecentlyChangedServiceInstance recentlyChangedItem = new RecentlyChangedServiceInstance(
+                serviceInstance,
+                System.currentTimeMillis(),
+                ServiceInstanceOperation.REGISTER);
+        recentlyChangedQueue.offer(recentlyChangedItem);
+
+        System.out.println("最近变更队列：" + recentlyChangedQueue);
+
+        // 将服务实例放入注册表中
         Map<String, ServiceInstance> serviceInstanceMap =
                 registry.get(serviceInstance.getServiceName());
 
@@ -72,6 +100,14 @@ public class ServiceRegistry {
     }
 
     /**
+     * 获取最近有变化的注册表
+     * @return
+     */
+    public synchronized LinkedList<RecentlyChangedServiceInstance> getRecentlyChangedQueue() {
+        return recentlyChangedQueue;
+    }
+
+    /**
      * 从注册表删除一个服务实例
      *
      * @param serviceName
@@ -80,7 +116,21 @@ public class ServiceRegistry {
     public synchronized void remove(String serviceName, String serviceInstanceId) {
         System.out.println("服务实例【" + serviceInstanceId + "】，从注册表中进行摘除");
         Map<String, ServiceInstance> serviceInstanceMap = registry.get(serviceName);
+        ServiceInstance serviceInstance = serviceInstanceMap.get(serviceInstanceId);
+
+        // 将服务实例变更信息放入队列中
+        RecentlyChangedServiceInstance recentlyChangedItem = new RecentlyChangedServiceInstance(
+                serviceInstance,
+                System.currentTimeMillis(),
+                ServiceInstanceOperation.REMOVE);
+        recentlyChangedQueue.offer(recentlyChangedItem);
+
+        System.out.println("最近变更队列：" + recentlyChangedQueue);
+
+        // 从服务注册表删除服务实例
         serviceInstanceMap.remove(serviceInstanceId);
+
+        System.out.println("注册表：" + registry);
     }
 
     /**
@@ -92,4 +142,93 @@ public class ServiceRegistry {
         return instance;
     }
 
+
+    /**
+     * 最近变化的服务实例
+     * @author zhonghuashishan
+     *
+     */
+    class RecentlyChangedServiceInstance {
+
+        /**
+         * 服务实例
+         */
+        ServiceInstance serviceInstance;
+        /**
+         * 发生变更的时间戳
+         */
+        Long changedTimestamp;
+        /**
+         * 变更操作
+         */
+        String serviceInstanceOperation;
+
+        public RecentlyChangedServiceInstance(
+                ServiceInstance serviceInstance,
+                Long changedTimestamp,
+                String serviceInstanceOperation) {
+            this.serviceInstance = serviceInstance;
+            this.changedTimestamp = changedTimestamp;
+            this.serviceInstanceOperation = serviceInstanceOperation;
+        }
+
+        @Override
+        public String toString() {
+            return "RecentlyChangedServiceInstance [serviceInstance=" + serviceInstance + ", changedTimestamp="
+                    + changedTimestamp + ", serviceInstanceOperation=" + serviceInstanceOperation + "]";
+        }
+
+    }
+
+    /**
+     * 服务实例操作
+     * @author zhonghuashishan
+     *
+     */
+    class ServiceInstanceOperation {
+
+        /**
+         * 注册
+         */
+        public static final String REGISTER = "register";
+        /**
+         * 删除
+         */
+        public static final String REMOVE = "REMOVE";
+
+    }
+
+    /**
+     * 最近变更队列的监控线程
+     * @author zhonghuashishan
+     *
+     */
+    class RecentlyChangedQueueMonitor extends Thread {
+
+        @Override
+        public void run() {
+            while(true) {
+                try {
+                    synchronized(instance) {
+                        RecentlyChangedServiceInstance recentlyChangedItem = null;
+                        Long currentTimestamp = System.currentTimeMillis();
+
+                        while((recentlyChangedItem = recentlyChangedQueue.peek()) != null) {
+                            // 判断如果一个服务实例变更信息已经在队列里存在超过3分钟了
+                            // 就从队列中移除
+                            if(currentTimestamp - recentlyChangedItem.changedTimestamp
+                                    > RECENTLY_CHANGED_ITEM_EXPIRED) {
+                                recentlyChangedQueue.pop();
+                            }
+                        }
+                    }
+
+                    Thread.sleep(RECENTLY_CHANGED_ITEM_CHECK_INTERVAL);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
 }
