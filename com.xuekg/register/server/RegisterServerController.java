@@ -1,5 +1,6 @@
 package register.server;
 
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -79,12 +80,20 @@ public class RegisterServerController {
     }
 
     /**
-     * 拉取服务注册表
+     * 拉取全量服务注册表
      *
      * @return
      */
-    public Map<String, Map<String, ServiceInstance>> fetchServiceRegistry() {
+    public Map<String, Map<String, ServiceInstance>> fetchFullServiceRegistry() {
         return registry.getRegistry();
+    }
+
+    /**
+     * 拉取增量注册表
+     * @return
+     */
+    public LinkedList<ServiceRegistry.RecentlyChangedServiceInstance> fetchDeltaServiceRegistry() {
+        return registry.getRecentlyChangedQueue();
     }
 
     /**

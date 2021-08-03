@@ -145,7 +145,7 @@ public class ServiceRegistry {
 
     /**
      * 最近变化的服务实例
-     * @author zhonghuashishan
+     * @author xuekg
      *
      */
     class RecentlyChangedServiceInstance {
@@ -182,7 +182,7 @@ public class ServiceRegistry {
 
     /**
      * 服务实例操作
-     * @author zhonghuashishan
+     * @author xuekg
      *
      */
     class ServiceInstanceOperation {
@@ -200,7 +200,7 @@ public class ServiceRegistry {
 
     /**
      * 最近变更队列的监控线程
-     * @author zhonghuashishan
+     * @author xuekg
      *
      */
     class RecentlyChangedQueueMonitor extends Thread {
