@@ -1,4 +1,4 @@
-package concurrency_7;
+package threadlocal;
 
 /*
     ThreadLocal
