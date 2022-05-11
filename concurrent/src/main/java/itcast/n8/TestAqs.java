@@ -1,13 +1,12 @@
 package itcast.n8;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestAqs")
 public class TestAqs {
@@ -17,7 +16,7 @@ public class TestAqs {
             lock.lock();
             try {
                 log.debug("locking...");
-                sleep(1);
+                Sleeper.sleep(1);
             } finally {
                 log.debug("unlocking...");
                 lock.unlock();

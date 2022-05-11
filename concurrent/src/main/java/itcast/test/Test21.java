@@ -1,10 +1,9 @@
 package itcast.test;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.Test21")
 public class Test21 {
@@ -21,7 +20,7 @@ public class Test21 {
 
         new Thread(() -> {
             while(true) {
-                sleep(1);
+                Sleeper.sleep(1);
                 Message message = queue.take();
             }
         }, "消费者").start();

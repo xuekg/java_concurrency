@@ -1,20 +1,19 @@
 package itcast.pattern;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestGuardedObjectV2")
 public class TestGuardedObjectV2 {
     public static void main(String[] args) {
         GuardedObjectV2 v2 = new GuardedObjectV2();
         new Thread(() -> {
-            sleep(1);
+            Sleeper.sleep(1);
             v2.complete(null);
-            sleep(1);
+            Sleeper.sleep(1);
             v2.complete(Arrays.asList("a", "b", "c"));
         }).start();
 

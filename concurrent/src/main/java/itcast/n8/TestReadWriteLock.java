@@ -1,10 +1,9 @@
 package itcast.n8;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestReadWriteLock")
 public class TestReadWriteLock {
@@ -32,7 +31,7 @@ class DataContainer {
         r.lock();
         try {
             log.debug("读取");
-            sleep(1);
+            Sleeper.sleep(1);
             return data;
         } finally {
             log.debug("释放读锁...");
@@ -45,7 +44,7 @@ class DataContainer {
         w.lock();
         try {
             log.debug("写入");
-            sleep(1);
+            Sleeper.sleep(1);
         } finally {
             log.debug("释放写锁...");
             w.unlock();

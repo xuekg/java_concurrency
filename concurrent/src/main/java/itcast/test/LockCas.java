@@ -1,10 +1,9 @@
 package itcast.test;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.Test42")
 public class LockCas {
@@ -32,7 +31,7 @@ public class LockCas {
             lock.lock();
             try {
                 log.debug("lock...");
-                sleep(1);
+                Sleeper.sleep(1);
             } finally {
                 lock.unlock();
             }

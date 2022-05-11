@@ -1,10 +1,9 @@
 package itcast.n8;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.Semaphore;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestSemaphore")
 public class TestSemaphore {
@@ -22,7 +21,7 @@ public class TestSemaphore {
                 }
                 try {
                     log.debug("running...");
-                    sleep(1);
+                    Sleeper.sleep(1);
                     log.debug("end...");
                 } finally {
                     semaphore.release();

@@ -1,12 +1,11 @@
 package itcast.n8;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.*;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestTimer")
 public class TestTimer {
@@ -57,7 +56,7 @@ public class TestTimer {
             @Override
             public void run() {
                 log.debug("task 1");
-                sleep(2);
+                Sleeper.sleep(2);
             }
         };
         TimerTask task2 = new TimerTask() {

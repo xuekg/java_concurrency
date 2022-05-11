@@ -1,10 +1,9 @@
 package itcast.n8;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.*;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestCyclicBarrier")
 public class TestCyclicBarrier {
@@ -17,7 +16,7 @@ public class TestCyclicBarrier {
         for (int i = 0; i < 3; i++) { // task1  task2  task1
             service.submit(() -> {
                 log.debug("task1 begin...");
-                sleep(1);
+                Sleeper.sleep(1);
                 try {
                     barrier.await(); // 2-1=1
                 } catch (InterruptedException | BrokenBarrierException e) {
@@ -26,7 +25,7 @@ public class TestCyclicBarrier {
             });
             service.submit(() -> {
                 log.debug("task2 begin...");
-                sleep(2);
+                Sleeper.sleep(2);
                 try {
                     barrier.await(); // 1-1=0
                 } catch (InterruptedException | BrokenBarrierException e) {
@@ -44,12 +43,12 @@ public class TestCyclicBarrier {
             CountDownLatch latch = new CountDownLatch(2);
             service.submit(() -> {
                 log.debug("task1 start...");
-                sleep(1);
+                Sleeper.sleep(1);
                 latch.countDown();
             });
             service.submit(() -> {
                 log.debug("task2 start...");
-                sleep(2);
+                Sleeper.sleep(2);
                 latch.countDown();
             });
             try {

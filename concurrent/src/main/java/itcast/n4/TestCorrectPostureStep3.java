@@ -1,8 +1,7 @@
 package itcast.n4;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestCorrectPosture")
 public class TestCorrectPostureStep3 {
@@ -53,7 +52,7 @@ public class TestCorrectPostureStep3 {
             }
         }, "小女").start();
 
-        sleep(1);
+        Sleeper.sleep(1);
         new Thread(() -> {
             synchronized (room) {
                 hasTakeout = true;

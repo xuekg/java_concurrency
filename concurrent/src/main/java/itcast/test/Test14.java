@@ -1,10 +1,9 @@
 package itcast.test;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.locks.LockSupport;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.Test14")
 public class Test14 {
@@ -20,7 +19,7 @@ public class Test14 {
         t1.start();
 
 
-        sleep(1);
+        Sleeper.sleep(1);
         t1.interrupt();
     }
 
@@ -33,7 +32,7 @@ public class Test14 {
         }, "t1");
         t1.start();
 
-        sleep(1);
+        Sleeper.sleep(1);
         t1.interrupt();
 
     }

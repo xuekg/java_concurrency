@@ -1,10 +1,9 @@
 package itcast.n8;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.locks.StampedLock;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestStampedLock")
 public class TestStampedLock {
@@ -13,7 +12,7 @@ public class TestStampedLock {
         new Thread(() -> {
             dataContainer.read(1);
         }, "t1").start();
-        sleep(0.5);
+        Sleeper.sleep(0.5);
         new Thread(() -> {
             dataContainer.read(0);
         }, "t2").start();
@@ -32,7 +31,7 @@ class DataContainerStamped {
     public int read(int readTime) {
         long stamp = lock.tryOptimisticRead();
         log.debug("optimistic read locking...{}", stamp);
-        sleep(readTime);
+        Sleeper.sleep(readTime);
         if (lock.validate(stamp)) {
             log.debug("read finish...{}, data:{}", stamp, data);
             return data;
@@ -42,7 +41,7 @@ class DataContainerStamped {
         try {
             stamp = lock.readLock();
             log.debug("read lock {}", stamp);
-            sleep(readTime);
+            Sleeper.sleep(readTime);
             log.debug("read finish...{}, data:{}", stamp, data);
             return data;
         } finally {
@@ -55,7 +54,7 @@ class DataContainerStamped {
         long stamp = lock.writeLock();
         log.debug("write lock {}", stamp);
         try {
-            sleep(2);
+            Sleeper.sleep(2);
             this.data = newData;
         } finally {
             log.debug("write unlock {}", stamp);

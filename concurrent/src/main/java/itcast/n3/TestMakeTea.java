@@ -1,8 +1,7 @@
 package itcast.n3;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestMakeTea")
 public class TestMakeTea {
@@ -15,18 +14,18 @@ public class TestMakeTea {
     private static void s1() {
         Thread t1 = new Thread(() -> {
             log.debug("洗水壶");
-            sleep(1);
+            Sleeper.sleep(1);
             log.debug("烧开水");
-            sleep(15);
+            Sleeper.sleep(15);
         }, "老王");
 
         Thread t2 = new Thread(() -> {
             log.debug("洗茶壶");
-            sleep(1);
+            Sleeper.sleep(1);
             log.debug("洗茶杯");
-            sleep(2);
+            Sleeper.sleep(2);
             log.debug("拿茶叶");
-            sleep(1);
+            Sleeper.sleep(1);
             try {
                 t1.join();
             } catch (InterruptedException e) {
@@ -50,9 +49,9 @@ class S2 {
     public static void makeTea() {
         new Thread(() -> {
             log.debug("洗水壶");
-            sleep(1);
+            Sleeper.sleep(1);
             log.debug("烧开水");
-            sleep(5);
+            Sleeper.sleep(5);
             synchronized (lock) {
                 kettle = "开水";
                 lock.notifyAll();
@@ -72,11 +71,11 @@ class S2 {
 
         new Thread(() -> {
             log.debug("洗茶壶");
-            sleep(1);
+            Sleeper.sleep(1);
             log.debug("洗茶杯");
-            sleep(2);
+            Sleeper.sleep(2);
             log.debug("拿茶叶");
-            sleep(1);
+            Sleeper.sleep(1);
             synchronized (lock) {
                 tea = "花茶";
                 lock.notifyAll();
@@ -105,9 +104,9 @@ class S3 {
     public static void makeTea() {
         new Thread(() -> {
             log.debug("洗水壶");
-            sleep(1);
+            Sleeper.sleep(1);
             log.debug("烧开水");
-            sleep(5);
+            Sleeper.sleep(5);
             synchronized (lock) {
                 kettle = "开水";
                 lock.notifyAll();
@@ -116,11 +115,11 @@ class S3 {
 
         new Thread(() -> {
             log.debug("洗茶壶");
-            sleep(1);
+            Sleeper.sleep(1);
             log.debug("洗茶杯");
-            sleep(2);
+            Sleeper.sleep(2);
             log.debug("拿茶叶");
-            sleep(1);
+            Sleeper.sleep(1);
             synchronized (lock) {
                 tea = "花茶";
                 lock.notifyAll();

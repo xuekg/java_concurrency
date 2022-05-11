@@ -1,12 +1,10 @@
 package itcast.test;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
-import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.Test22")
 public class Test22 {
@@ -34,7 +32,7 @@ public class Test22 {
         lock.lock();
         log.debug("获得到锁");
         t1.start();
-        sleep(1);
+        Sleeper.sleep(1);
         log.debug("释放了锁");
         lock.unlock();
     }

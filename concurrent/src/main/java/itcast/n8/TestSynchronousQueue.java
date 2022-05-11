@@ -1,10 +1,9 @@
 package itcast.n8;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.SynchronousQueue;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestSynchronousQueue")
 public class TestSynchronousQueue {
@@ -24,7 +23,7 @@ public class TestSynchronousQueue {
             }
         },"t1").start();
 
-        sleep(1);
+        Sleeper.sleep(1);
 
         new Thread(() -> {
             try {
@@ -35,7 +34,7 @@ public class TestSynchronousQueue {
             }
         },"t2").start();
 
-        sleep(1);
+        Sleeper.sleep(1);
 
         new Thread(() -> {
             try {

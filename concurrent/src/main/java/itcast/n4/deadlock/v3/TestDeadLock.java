@@ -1,11 +1,9 @@
 package itcast.n4.deadlock.v3;
 
-import cn.itcast.n2.util.Sleeper;
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static cn.itcast.n4.deadlock.v3.TestDeadLock.STATE;
 
 @Slf4j(topic = "c.TestDeadLock")
 public class TestDeadLock {

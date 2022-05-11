@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.util.List;
 
-import static cn.itcast.pattern.Downloader.*;
+import static itcast.pattern.Downloader.download;
 
 @Slf4j(topic = "c.TestGuardedObject")
 public class TestGuardedObject {

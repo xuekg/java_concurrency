@@ -1,10 +1,7 @@
 package itcast.n3;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.concurrent.TimeUnit;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestJoin")
 public class TestJoin {
@@ -18,7 +15,7 @@ public class TestJoin {
 
     public static void test3() throws InterruptedException {
         Thread t1 = new Thread(() -> {
-            sleep(2);
+            Sleeper.sleep(2);
             r1 = 10;
         });
 
@@ -34,11 +31,11 @@ public class TestJoin {
 
     private static void test2() throws InterruptedException {
         Thread t1 = new Thread(() -> {
-            sleep(1);
+            Sleeper.sleep(1);
             r1 = 10;
         });
         Thread t2 = new Thread(() -> {
-            sleep(2);
+            Sleeper.sleep(2);
             r2 = 20;
         });
         t1.start();
@@ -57,7 +54,7 @@ public class TestJoin {
         log.debug("开始");
         Thread t1 = new Thread(() -> {
             log.debug("开始");
-            sleep(1);
+            Sleeper.sleep(1);
             log.debug("结束");
             r = 10;
         });

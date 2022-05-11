@@ -1,10 +1,9 @@
 package itcast.n3;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.locks.LockSupport;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestInterrupt")
 public class TestInterrupt {
@@ -22,7 +21,7 @@ public class TestInterrupt {
         t1.start();
 
 
-        sleep(1);
+        Sleeper.sleep(1);
         t1.interrupt();
     }
     private static void test3() {
@@ -35,7 +34,7 @@ public class TestInterrupt {
         t1.start();
 
 
-        sleep(0.5);
+        Sleeper.sleep(0.5);
         t1.interrupt();
     }
     private static void test2() throws InterruptedException {
@@ -51,16 +50,16 @@ public class TestInterrupt {
         }, "t2");
         t2.start();
 
-        sleep(0.5);
+        Sleeper.sleep(0.5);
         t2.interrupt();
     }
     private static void test1() throws InterruptedException {
         Thread t1 = new Thread(()->{
-            sleep(1);
+            Sleeper.sleep(1);
         }, "t1");
         t1.start();
 
-        sleep(0.5);
+        Sleeper.sleep(0.5);
         t1.interrupt();
         log.debug(" 打断状态: {}", t1.isInterrupted());
     }

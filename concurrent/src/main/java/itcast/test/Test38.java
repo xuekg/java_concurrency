@@ -1,10 +1,9 @@
 package itcast.test;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.atomic.AtomicMarkableReference;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.Test38")
 public class Test38 {
@@ -24,7 +23,7 @@ public class Test38 {
             log.debug(bag.toString());
         },"保洁阿姨").start();
 
-        sleep(1);
+        Sleeper.sleep(1);
         log.debug("想换一只新垃圾袋？");
         boolean success = ref.compareAndSet(prev, new GarbageBag("空垃圾袋"), true, false);
         log.debug("换了么？" + success);

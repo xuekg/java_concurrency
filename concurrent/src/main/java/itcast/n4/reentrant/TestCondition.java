@@ -1,11 +1,10 @@
 package itcast.n4.reentrant;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestCondition")
 public class TestCondition {
@@ -48,9 +47,9 @@ public class TestCondition {
             }
         }).start();
 
-        sleep(1);
+        Sleeper.sleep(1);
         sendBreakfast();
-        sleep(1);
+        Sleeper.sleep(1);
         sendCigarette();
     }
 

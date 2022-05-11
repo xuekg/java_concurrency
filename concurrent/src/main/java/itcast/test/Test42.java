@@ -1,6 +1,6 @@
 package itcast.test;
 
-import cn.itcast.n4.UnsafeAccessor;
+import itcast.n4.UnsafeAccessor;
 import lombok.extern.slf4j.Slf4j;
 import sun.misc.Unsafe;
 

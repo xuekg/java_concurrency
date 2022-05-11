@@ -1,8 +1,7 @@
 package itcast.test;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.Test10")
 public class Test10 {
@@ -14,7 +13,7 @@ public class Test10 {
         log.debug("开始");
         Thread t1 = new Thread(() -> {
             log.debug("开始");
-            sleep(1);
+            Sleeper.sleep(1);
             log.debug("结束");
             r = 10;
         },"t1");

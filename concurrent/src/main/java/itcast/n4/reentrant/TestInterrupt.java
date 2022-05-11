@@ -1,10 +1,9 @@
 package itcast.n4.reentrant;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.locks.ReentrantLock;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestInterrupt")
 public class TestInterrupt {
@@ -30,10 +29,10 @@ public class TestInterrupt {
         log.debug("获得了锁");
         t1.start();
         try {
-            sleep(1);
+            Sleeper.sleep(1);
             t1.interrupt();
             log.debug("执行打断");
-            sleep(1);
+            Sleeper.sleep(1);
         } finally {
             log.debug("释放了锁");
             lock.unlock();
@@ -64,7 +63,7 @@ public class TestInterrupt {
         log.debug("获得了锁");
         t1.start();
         try {
-            sleep(1);
+            Sleeper.sleep(1);
             t1.interrupt();
             log.debug("执行打断");
         } finally {

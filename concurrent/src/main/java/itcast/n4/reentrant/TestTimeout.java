@@ -1,11 +1,10 @@
 package itcast.n4.reentrant;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestTimeout")
 public class TestTimeout {
@@ -36,7 +35,7 @@ public class TestTimeout {
         log.debug("获得了锁");
         t1.start();
         try {
-            sleep(2);
+            Sleeper.sleep(2);
         } finally {
             lock.unlock();
         }
@@ -60,7 +59,7 @@ public class TestTimeout {
         log.debug("获得了锁");
         t1.start();
         try {
-            sleep(2);
+            Sleeper.sleep(2);
         } finally {
             lock.unlock();
         }

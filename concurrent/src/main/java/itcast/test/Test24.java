@@ -1,11 +1,10 @@
 package itcast.test;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.Test24")
 public class Test24 {
@@ -57,7 +56,7 @@ public class Test24 {
             }
         }, "小女").start();
 
-        sleep(1);
+        Sleeper.sleep(1);
         new Thread(() -> {
             ROOM.lock();
             try {
@@ -68,7 +67,7 @@ public class Test24 {
             }
         }, "送外卖的").start();
 
-        sleep(1);
+        Sleeper.sleep(1);
 
         new Thread(() -> {
             ROOM.lock();

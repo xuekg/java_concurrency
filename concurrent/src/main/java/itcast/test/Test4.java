@@ -1,7 +1,7 @@
 package itcast.test;
 
-import cn.itcast.Constants;
-import cn.itcast.n2.util.FileReader;
+import itcast.Constants;
+import itcast.n2.util.FileReader;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j(topic = "c.Test4")

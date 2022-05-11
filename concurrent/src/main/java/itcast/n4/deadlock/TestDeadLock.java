@@ -1,8 +1,7 @@
 package itcast.n4.deadlock;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestDeadLock")
 public class TestDeadLock {
@@ -16,7 +15,7 @@ public class TestDeadLock {
         Thread t1 = new Thread(() -> {
             synchronized (A) {
                 log.debug("lock A");
-                sleep(1);
+                Sleeper.sleep(1);
                 synchronized (B) {
                     log.debug("lock B");
                     log.debug("操作...");
@@ -27,7 +26,7 @@ public class TestDeadLock {
         Thread t2 = new Thread(() -> {
             synchronized (B) {
                 log.debug("lock B");
-                sleep(0.5);
+                Sleeper.sleep(0.5);
                 synchronized (A) {
                     log.debug("lock A");
                     log.debug("操作...");

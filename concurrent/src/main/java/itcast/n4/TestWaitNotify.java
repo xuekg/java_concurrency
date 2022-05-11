@@ -1,8 +1,7 @@
 package itcast.n4;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestWaitNotify")
 public class TestWaitNotify {
@@ -35,7 +34,7 @@ public class TestWaitNotify {
         },"t2").start();
 
         // 主线程两秒后执行
-        sleep(0.5);
+        Sleeper.sleep(0.5);
         log.debug("唤醒 obj 上其它线程");
         synchronized (obj) {
 //            obj.notify(); // 唤醒obj上一个线程

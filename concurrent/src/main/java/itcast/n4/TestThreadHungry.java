@@ -1,7 +1,5 @@
 package itcast.n4;
 
-import static cn.itcast.n2.util.Sleeper.sleep;
-
 public class TestThreadHungry {
     public static void main(String[] args) throws InterruptedException {
         for (int i = 0; i < 2; i++) {

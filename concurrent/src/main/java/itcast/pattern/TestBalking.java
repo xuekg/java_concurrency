@@ -1,6 +1,6 @@
 package itcast.pattern;
 
-import cn.itcast.n2.util.Sleeper;
+import itcast.n2.util.Sleeper;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;

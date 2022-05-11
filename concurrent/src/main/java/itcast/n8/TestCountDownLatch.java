@@ -1,5 +1,6 @@
 package itcast.n8;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestTemplate;
 
@@ -8,8 +9,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestCountDownLatch")
 public class TestCountDownLatch {
@@ -22,19 +21,19 @@ public class TestCountDownLatch {
         ExecutorService service = Executors.newFixedThreadPool(4);
         service.submit(() -> {
             log.debug("begin...");
-            sleep(1);
+            Sleeper.sleep(1);
             latch.countDown();
             log.debug("end...{}", latch.getCount());
         });
         service.submit(() -> {
             log.debug("begin...");
-            sleep(1.5);
+            Sleeper.sleep(1.5);
             latch.countDown();
             log.debug("end...{}", latch.getCount());
         });
         service.submit(() -> {
             log.debug("begin...");
-            sleep(2);
+            Sleeper.sleep(2);
             latch.countDown();
             log.debug("end...{}", latch.getCount());
         });
@@ -54,21 +53,21 @@ public class TestCountDownLatch {
 
         new Thread(() -> {
             log.debug("begin...");
-            sleep(1);
+            Sleeper.sleep(1);
             latch.countDown();
             log.debug("end...{}", latch.getCount());
         }).start();
 
         new Thread(() -> {
             log.debug("begin...");
-            sleep(2);
+            Sleeper.sleep(2);
             latch.countDown();
             log.debug("end...{}", latch.getCount());
         }).start();
 
         new Thread(() -> {
             log.debug("begin...");
-            sleep(1.5);
+            Sleeper.sleep(1.5);
             latch.countDown();
             log.debug("end...{}", latch.getCount());
         }).start();

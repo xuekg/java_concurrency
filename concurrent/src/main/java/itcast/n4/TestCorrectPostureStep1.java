@@ -1,8 +1,7 @@
 package itcast.n4;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
-
-import static cn.itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestCorrectPosture")
 public class TestCorrectPostureStep1 {
@@ -16,7 +15,7 @@ public class TestCorrectPostureStep1 {
                 log.debug("有烟没？[{}]", hasCigarette);
                 if (!hasCigarette) {
                     log.debug("没烟，先歇会！");
-                    sleep(2);
+                    Sleeper.sleep(2);
                 }
                 log.debug("有烟没？[{}]", hasCigarette);
                 if (hasCigarette) {
@@ -33,7 +32,7 @@ public class TestCorrectPostureStep1 {
             }, "其它人").start();
         }
 
-        sleep(1);
+        Sleeper.sleep(1);
         new Thread(() -> {
             // 这里能不能加 synchronized (room)？
             synchronized (room) {
