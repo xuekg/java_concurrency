@@ -1,7 +1,8 @@
 package itcast.n3;
 
-import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
+
+import static itcast.n2.util.Sleeper.sleep;
 
 @Slf4j(topic = "c.TestJoin")
 public class TestJoin {
@@ -15,7 +16,7 @@ public class TestJoin {
 
     public static void test3() throws InterruptedException {
         Thread t1 = new Thread(() -> {
-            Sleeper.sleep(2);
+            sleep(2);
             r1 = 10;
         });
 
@@ -24,18 +25,18 @@ public class TestJoin {
 
         // 线程执行结束会导致 join 结束
         log.debug("join begin");
-        t1.join(3000);
+        t1.join(1500);
         long end = System.currentTimeMillis();
         log.debug("r1: {} r2: {} cost: {}", r1, r2, end - start);
     }
 
     private static void test2() throws InterruptedException {
         Thread t1 = new Thread(() -> {
-            Sleeper.sleep(1);
+            sleep(1);
             r1 = 10;
         });
         Thread t2 = new Thread(() -> {
-            Sleeper.sleep(2);
+            sleep(2);
             r2 = 20;
         });
         t1.start();
@@ -54,7 +55,7 @@ public class TestJoin {
         log.debug("开始");
         Thread t1 = new Thread(() -> {
             log.debug("开始");
-            Sleeper.sleep(1);
+            sleep(1);
             log.debug("结束");
             r = 10;
         });

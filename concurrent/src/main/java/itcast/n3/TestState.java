@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 
 @Slf4j(topic = "c.TestState")
+//线程的状态
 public class TestState {
     public static void main(String[] args) throws IOException {
         Thread t1 = new Thread("t1") {

@@ -9,6 +9,7 @@ public class Test8 {
 
     public static void main(String[] args) throws InterruptedException {
         log.debug("enter");
+        // 有单位名称，可读性好点
         TimeUnit.SECONDS.sleep(1);
         log.debug("end");
 //        Thread.sleep(1000);

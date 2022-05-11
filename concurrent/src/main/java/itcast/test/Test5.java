@@ -15,6 +15,8 @@ public class Test5 {
 
         System.out.println(t1.getState());
         t1.start();
+        //Exception in thread "main" java.lang.IllegalThreadStateException
+        t1.start();
         System.out.println(t1.getState());
     }
 }
