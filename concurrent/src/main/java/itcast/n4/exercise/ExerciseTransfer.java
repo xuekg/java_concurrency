@@ -6,23 +6,28 @@ import java.util.Random;
 
 @Slf4j(topic = "c.ExerciseTransfer")
 public class ExerciseTransfer {
+
     public static void main(String[] args) throws InterruptedException {
         Account a = new Account(1000);
         Account b = new Account(1000);
+
         Thread t1 = new Thread(() -> {
             for (int i = 0; i < 1000; i++) {
                 a.transfer(b, randomAmount());
             }
         }, "t1");
+
         Thread t2 = new Thread(() -> {
             for (int i = 0; i < 1000; i++) {
                 b.transfer(a, randomAmount());
             }
         }, "t2");
+
         t1.start();
         t2.start();
         t1.join();
         t2.join();
+
         // 查看转账2000次后的总金额
         log.debug("total:{}", (a.getMoney() + b.getMoney()));
     }
@@ -38,6 +43,7 @@ public class ExerciseTransfer {
 
 // 账户
 class Account {
+
     private int money;
 
     public Account(int money) {
@@ -53,8 +59,10 @@ class Account {
     }
 
     // 转账
+    // synchronized 加在方法上是不行的
+    // 加在方法中，锁住this也是不行的，必须锁住类对象
     public void transfer(Account target, int amount) {
-        synchronized(Account.class) {
+        synchronized (this) {
             if (this.money >= amount) {
                 this.setMoney(this.getMoney() - amount);
                 target.setMoney(target.getMoney() + amount);

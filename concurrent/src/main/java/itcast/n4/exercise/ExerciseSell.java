@@ -1,5 +1,6 @@
 package itcast.n4.exercise;
 
+import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Vector;
 
 @Slf4j(topic = "c.ExerciseSell")
 public class ExerciseSell {
+
     public static void main(String[] args) throws InterruptedException {
         // 模拟多人买票
         TicketWindow window = new TicketWindow(1000);
@@ -17,10 +19,12 @@ public class ExerciseSell {
         List<Thread> threadList = new ArrayList<>();
         // 卖出的票数统计
         List<Integer> amountList = new Vector<>();
-        for (int i = 0; i < 2000; i++) {
+
+        for (int i = 0; i < 4000; i++) {
             Thread thread = new Thread(() -> {
                 // 买票
                 int amount = window.sell(random(5));
+//                Sleeper.sleep(random(5));
                 // 统计买票数
                 amountList.add(amount);
             });
@@ -33,8 +37,11 @@ public class ExerciseSell {
         }
 
         // 统计卖出的票数和剩余票数
-        log.debug("余票：{}",window.getCount());
-        log.debug("卖出的票数：{}", amountList.stream().mapToInt(i-> i).sum());
+        int count = window.getCount();
+        log.debug("余票：{}", count);
+        int sell = amountList.stream().mapToInt(i -> i).sum();
+        log.debug("卖出的票数：{}", sell);
+        log.debug("总共的票数：{}", sell + count);
     }
 
     // Random 为线程安全
