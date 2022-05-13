@@ -14,17 +14,27 @@ public class Test8Locks {
         }).start();
         new Thread(() -> {
             log.debug("begin");
-            n2.b();
+            n1.b();
+        }).start();
+        new Thread(() -> {
+            log.debug("begin");
+            n1.c();
         }).start();
     }
 }
+
 @Slf4j(topic = "c.Number")
-class Number{
+class Number {
     public synchronized void a() {
         Sleeper.sleep(1);
         log.debug("1");
     }
+
     public synchronized void b() {
         log.debug("2");
+    }
+
+    public void c() {
+        log.debug("3");
     }
 }
