@@ -9,6 +9,14 @@ import static itcast.pattern.Downloader.download;
 
 @Slf4j(topic = "c.TestGuardedObject")
 public class TestGuardedObject {
+
+    /**
+     * 保护性暂停模式：
+     * 不用等另一个线程结束
+     * 等待结果的对象是局部的
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         GuardedObject guardedObject = new GuardedObject();
         new Thread(() -> {
@@ -19,7 +27,7 @@ public class TestGuardedObject {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();
+        }, "t1").start();
 
         log.debug("waiting...");
         Object response = guardedObject.get();

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j(topic = "c.TestCorrectPosture")
 public class TestCorrectPostureStep1 {
+
     static final Object room = new Object();
     static boolean hasCigarette = false; // 有没有烟
     static boolean hasTakeout = false;
@@ -34,7 +35,7 @@ public class TestCorrectPostureStep1 {
 
         Sleeper.sleep(1);
         new Thread(() -> {
-            // 这里能不能加 synchronized (room)？
+            // 这里能不能加 synchronized (room)？可以加，只不过要等小南休息过2s后才能送到
             synchronized (room) {
                 hasCigarette = true;
                 log.debug("烟到了噢！");

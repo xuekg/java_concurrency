@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Downloader {
+
     public static List<String> download() throws IOException {
         HttpURLConnection conn = (HttpURLConnection) new URL("https://www.baidu.com/").openConnection();
         List<String> lines = new ArrayList<>();

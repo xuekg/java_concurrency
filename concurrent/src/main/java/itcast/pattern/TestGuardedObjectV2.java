@@ -8,6 +8,7 @@ import java.util.List;
 
 @Slf4j(topic = "c.TestGuardedObjectV2")
 public class TestGuardedObjectV2 {
+
     public static void main(String[] args) {
         GuardedObjectV2 v2 = new GuardedObjectV2();
         new Thread(() -> {
@@ -44,6 +45,7 @@ class GuardedObjectV2 {
             long timePassed = 0;
             while (response == null) {
                 // 4) 假设 millis 是 1000，结果在 400 时唤醒了，那么还有 600 要等
+                // 这一轮应该等待的时间
                 long waitTime = millis - timePassed;
                 log.debug("waitTime: {}", waitTime);
                 if (waitTime <= 0) {

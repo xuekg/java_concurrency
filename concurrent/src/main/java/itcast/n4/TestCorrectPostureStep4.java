@@ -5,12 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j(topic = "c.TestCorrectPosture")
 public class TestCorrectPostureStep4 {
+
     static final Object room = new Object();
     static boolean hasCigarette = false;
     static boolean hasTakeout = false;
 
     public static void main(String[] args) {
-
 
         new Thread(() -> {
             synchronized (room) {

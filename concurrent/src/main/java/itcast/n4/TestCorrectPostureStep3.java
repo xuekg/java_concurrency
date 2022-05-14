@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j(topic = "c.TestCorrectPosture")
 public class TestCorrectPostureStep3 {
+
     static final Object room = new Object();
     static boolean hasCigarette = false;
     static boolean hasTakeout = false;
@@ -57,6 +58,9 @@ public class TestCorrectPostureStep3 {
             synchronized (room) {
                 hasTakeout = true;
                 log.debug("外卖到了噢！");
+                //可能会唤醒小南，导致小南不能继续工作
+                room.notify();
+                //会唤醒两个，小女可以工作，但是小南不能工作
                 room.notifyAll();
             }
         }, "送外卖的").start();

@@ -5,16 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j(topic = "c.TestCorrectPosture")
 public class TestCorrectPostureStep5 {
+
     static final Object room = new Object();
     static boolean hasCigarette = false;
     static boolean hasTakeout = false;
 
     public static void main(String[] args) {
 
-
         new Thread(() -> {
             synchronized (room) {
                 log.debug("有烟没？[{}]", hasCigarette);
+                //可以避免虚假唤醒的问题
                 while (!hasCigarette) {
                     log.debug("没烟，先歇会！");
                     try {
