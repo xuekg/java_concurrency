@@ -11,6 +11,7 @@ import static itcast.pattern.Downloader.download;
 
 @Slf4j(topic = "c.TestGuardedObjectV3")
 public class TestGuardedObjectV3 {
+
     public static void main(String[] args) {
         for (int i = 0; i < 3; i++) {
             GuardedObjectV3 v3 = Fetures.createFeture();

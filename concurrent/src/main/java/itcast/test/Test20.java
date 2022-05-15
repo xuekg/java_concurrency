@@ -9,6 +9,7 @@ import java.util.Set;
 
 @Slf4j(topic = "c.Test20")
 public class Test20 {
+
     public static void main(String[] args) throws InterruptedException {
         for (int i = 0; i < 3; i++) {
             new People().start();
@@ -50,6 +51,7 @@ class Postman extends Thread {
     }
 }
 
+//解耦了结果产生的线程与等待结果的线程
 class Mailboxes {
     private static Map<Integer, GuardedObject> boxes = new Hashtable<>();
 

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j(topic = "c.TestWaitNotify")
 public class TestWaitNotify {
+
     final static Object obj = new Object();
 
     public static void main(String[] args) {

@@ -3,6 +3,7 @@ import itcast.n2.util.Sleeper;
 import lombok.extern.slf4j.Slf4j;
 
 public class TestMultiLock {
+
     public static void main(String[] args) {
         BigRoom bigRoom = new BigRoom();
         new Thread(() -> {
