@@ -6,20 +6,25 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Random;
 
 public class TestDeadLock {
+
     public static void main(String[] args) {
         Chopstick c1 = new Chopstick("1");
         Chopstick c2 = new Chopstick("2");
         Chopstick c3 = new Chopstick("3");
         Chopstick c4 = new Chopstick("4");
         Chopstick c5 = new Chopstick("5");
+
         new Philosopher("苏格拉底", c1, c2).start();
         new Philosopher("柏拉图", c2, c3).start();
         new Philosopher("亚里士多德", c3, c4).start();
         new Philosopher("赫拉克利特", c4, c5).start();
+        new Philosopher("阿基米德", c5, c1).start();
+        // TODO: 2022/5/16 这里改为 1.5就可以避免死锁了，改变获取锁的顺序来解决问题
         new Philosopher("阿基米德", c1, c5).start();
     }
 }
 
+//哲学家
 @Slf4j(topic = "c.Philosopher")
 class Philosopher extends Thread {
     Chopstick left;
@@ -45,6 +50,7 @@ class Philosopher extends Thread {
     }
 
     Random random = new Random();
+
     private void eat() {
         log.debug("eating...");
         Sleeper.sleep(0.5);

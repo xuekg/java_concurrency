@@ -4,11 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j(topic = "c.Test25")
 public class Test25 {
+
     static final Object lock = new Object();
     // 表示 t2 是否运行过
     static boolean t2runned = false;
 
     public static void main(String[] args) {
+
         Thread t1 = new Thread(() -> {
             synchronized (lock) {
                 while (!t2runned) {

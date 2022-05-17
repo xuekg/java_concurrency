@@ -6,6 +6,11 @@ import java.util.concurrent.locks.LockSupport;
 
 @Slf4j(topic = "c.Test26")
 public class Test26 {
+
+    /**
+     * 线程2先运行，1后运行
+     * @param args
+     */
     public static void main(String[] args) {
 
         Thread t1 = new Thread(() -> {

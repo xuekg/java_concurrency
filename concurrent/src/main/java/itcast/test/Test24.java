@@ -8,7 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j(topic = "c.Test24")
 public class Test24 {
-    static final Object room = new Object();
+
     static boolean hasCigarette = false;
     static boolean hasTakeout = false;
     static ReentrantLock ROOM = new ReentrantLock();
@@ -18,7 +18,6 @@ public class Test24 {
     static Condition waitTakeoutSet = ROOM.newCondition();
 
     public static void main(String[] args) {
-
 
         new Thread(() -> {
             ROOM.lock();

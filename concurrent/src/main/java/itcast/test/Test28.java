@@ -9,8 +9,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j(topic = "c.Test28")
 public class Test28 {
+
     public static void main(String[] args) {
         AwaitSignal2 as = new AwaitSignal2(3);
+
         as.start(new Thread(() -> {
             as.print("a");
         }), new Thread(() -> {
@@ -20,8 +22,6 @@ public class Test28 {
         }), new Thread(() -> {
             as.print("d");
         }));
-
-
     }
 }
 
