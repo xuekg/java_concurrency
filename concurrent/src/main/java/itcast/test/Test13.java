@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j(topic = "c.TwoPhaseTermination")
 public class Test13 {
+
     public static void main(String[] args) throws InterruptedException {
         TwoPhaseTermination tpt = new TwoPhaseTermination();
         tpt.start();
@@ -18,6 +19,7 @@ public class Test13 {
 
 @Slf4j(topic = "c.TwoPhaseTermination")
 class TwoPhaseTermination {
+
     // 监控线程
     private Thread monitorThread;
     // 停止标记

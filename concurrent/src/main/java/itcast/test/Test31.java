@@ -36,6 +36,10 @@ public class Test31 {
     }
 }
 
+/**
+ * 互斥：使用synchronized或lock达到共享资源互斥效果
+ * 同步：使用wait、notify或lock的条件变量来达到线程间通信效果
+ */
 class ParkUnpark {
 
     public void print(String str, Thread next) {
