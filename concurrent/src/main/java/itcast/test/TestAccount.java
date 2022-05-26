@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestAccount {
+
     public static void main(String[] args) {
         Account account = new AccountCas(10000);
         Account.demo(account);
@@ -13,6 +14,7 @@ public class TestAccount {
 }
 
 class AccountCas implements Account {
+
     private AtomicInteger balance;
 
     public AccountCas(int balance) {
@@ -64,6 +66,7 @@ class AccountUnsafe implements Account {
 }
 
 interface Account {
+
     // 获取余额
     Integer getBalance();
 
@@ -92,6 +95,6 @@ interface Account {
         });
         long end = System.nanoTime();
         System.out.println(account.getBalance()
-                + " cost: " + (end-start)/1000_000 + " ms");
+                + " cost: " + (end - start) / 1000_000 + " ms");
     }
 }
