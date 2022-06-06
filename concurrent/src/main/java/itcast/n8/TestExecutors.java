@@ -14,6 +14,7 @@ public class TestExecutors {
     }
 
     public static void test2() {
+        //任务执行失败后，线程池会新建一个线程
         ExecutorService pool = Executors.newSingleThreadExecutor();
         pool.execute(() -> {
             log.debug("1");

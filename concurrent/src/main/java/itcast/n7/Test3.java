@@ -44,16 +44,16 @@ class Pool {
         this.connections = new Connection[poolSize];
         this.states = new AtomicIntegerArray(new int[poolSize]);
         for (int i = 0; i < poolSize; i++) {
-            connections[i] = new MockConnection("连接" + (i+1));
+            connections[i] = new MockConnection("连接" + (i + 1));
         }
     }
 
     // 5. 借连接
     public Connection borrow() {
-        while(true) {
+        while (true) {
             for (int i = 0; i < poolSize; i++) {
                 // 获取空闲连接
-                if(states.get(i) == 0) {
+                if (states.get(i) == 0) {
                     if (states.compareAndSet(i, 0, 1)) {
                         log.debug("borrow {}", connections[i]);
                         return connections[i];

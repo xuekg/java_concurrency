@@ -16,6 +16,7 @@ public class Test1 {
                 log.debug("{}", parse);
             }).start();
         }
+        test();
     }
 
     private static void test() {

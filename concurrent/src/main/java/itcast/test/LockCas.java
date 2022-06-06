@@ -35,7 +35,7 @@ public class LockCas {
             } finally {
                 lock.unlock();
             }
-        }).start();
+        },"t1").start();
 
         new Thread(() -> {
             log.debug("begin...");
@@ -45,6 +45,6 @@ public class LockCas {
             } finally {
                 lock.unlock();
             }
-        }).start();
+        },"t2").start();
     }
 }

@@ -7,7 +7,9 @@ import java.util.concurrent.SynchronousQueue;
 
 @Slf4j(topic = "c.TestSynchronousQueue")
 public class TestSynchronousQueue {
+
     public static void main(String[] args) {
+        //适合任务数密集，任务执行时间较短
         SynchronousQueue<Integer> integers = new SynchronousQueue<>();
         new Thread(() -> {
             try {
@@ -21,7 +23,7 @@ public class TestSynchronousQueue {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        },"t1").start();
+        }, "t1").start();
 
         Sleeper.sleep(1);
 
@@ -32,7 +34,7 @@ public class TestSynchronousQueue {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        },"t2").start();
+        }, "t2").start();
 
         Sleeper.sleep(1);
 
@@ -43,6 +45,6 @@ public class TestSynchronousQueue {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        },"t3").start();
+        }, "t3").start();
     }
 }

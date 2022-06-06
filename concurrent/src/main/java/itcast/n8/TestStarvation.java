@@ -15,10 +15,13 @@ public class TestStarvation {
 
     static final List<String> MENU = Arrays.asList("地三鲜", "宫保鸡丁", "辣子鸡丁", "烤鸡翅");
     static Random RANDOM = new Random();
+
     static String cooking() {
         return MENU.get(RANDOM.nextInt(MENU.size()));
     }
+
     public static void main(String[] args) {
+        //线程数不足会导致活锁问题
         ExecutorService waiterPool = Executors.newFixedThreadPool(1);
         ExecutorService cookPool = Executors.newFixedThreadPool(1);
 
@@ -34,6 +37,7 @@ public class TestStarvation {
                 e.printStackTrace();
             }
         });
+
         waiterPool.execute(() -> {
             log.debug("处理点餐...");
             Future<String> f = cookPool.submit(() -> {

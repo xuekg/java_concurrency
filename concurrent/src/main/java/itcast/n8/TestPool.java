@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class TestPool {
     public static void main(String[] args) {
         ThreadPool threadPool = new ThreadPool(1,
-                1000, TimeUnit.MILLISECONDS, 1, (queue, task)->{
+                1000, TimeUnit.MILLISECONDS, 1, (queue, task) -> {
             // 1. 死等
 //            queue.put(task);
             // 2) 带超时等待
@@ -40,7 +40,8 @@ public class TestPool {
     }
 }
 
-@FunctionalInterface // 拒绝策略
+@FunctionalInterface
+        // 拒绝策略
 interface RejectPolicy<T> {
     void reject(BlockingQueue<T> queue, T task);
 }
@@ -68,7 +69,7 @@ class ThreadPool {
         // 当任务数没有超过 coreSize 时，直接交给 worker 对象执行
         // 如果任务数超过 coreSize 时，加入任务队列暂存
         synchronized (workers) {
-            if(workers.size() < coreSize) {
+            if (workers.size() < coreSize) {
                 Worker worker = new Worker(task);
                 log.debug("新增 worker{}, {}", worker, task);
                 workers.add(worker);
@@ -93,7 +94,7 @@ class ThreadPool {
         this.rejectPolicy = rejectPolicy;
     }
 
-    class Worker extends Thread{
+    class Worker extends Thread {
         private Runnable task;
 
         public Worker(Runnable task) {
@@ -106,7 +107,7 @@ class ThreadPool {
             // 1) 当 task 不为空，执行任务
             // 2) 当 task 执行完毕，再接着从任务队列获取任务并执行
 //            while(task != null || (task = taskQueue.take()) != null) {
-            while(task != null || (task = taskQueue.poll(timeout, timeUnit)) != null) {
+            while (task != null || (task = taskQueue.poll(timeout, timeUnit)) != null) {
                 try {
                     log.debug("正在执行...{}", task);
                     task.run();
@@ -123,6 +124,7 @@ class ThreadPool {
         }
     }
 }
+
 @Slf4j(topic = "c.BlockingQueue")
 class BlockingQueue<T> {
     // 1. 任务队列
@@ -215,7 +217,7 @@ class BlockingQueue<T> {
             long nanos = timeUnit.toNanos(timeout);
             while (queue.size() == capcity) {
                 try {
-                    if(nanos <= 0) {
+                    if (nanos <= 0) {
                         return false;
                     }
                     log.debug("等待加入任务队列 {} ...", task);
@@ -246,7 +248,7 @@ class BlockingQueue<T> {
         lock.lock();
         try {
             // 判断队列是否满
-            if(queue.size() == capcity) {
+            if (queue.size() == capcity) {
                 rejectPolicy.reject(this, task);
             } else {  // 有空闲
                 log.debug("加入任务队列 {}", task);
