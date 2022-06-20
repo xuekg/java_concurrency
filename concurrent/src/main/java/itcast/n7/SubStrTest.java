@@ -18,8 +18,8 @@ public class SubStrTest {
         System.out.println(rolling.substring(rolling.length() - 2, rolling.length()));
 
         String str1 = "MA-M04";
-        String str2 = "MA-M09";
-        System.out.println(str1.compareTo(str2));
+        String str2 = "MA-M10";
+        System.out.println(str1.compareToIgnoreCase(str2));
         System.out.println("=======================");
 
         List<ObjTest1> list = new ArrayList<>();
