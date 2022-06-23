@@ -1,9 +1,6 @@
 package itcast.n7;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -14,8 +11,11 @@ import java.util.stream.Collectors;
 public class SubStrTest {
 
     public static void main(String[] args) {
-        String rolling = "MA-02";
-        System.out.println(rolling.substring(rolling.length() - 2, rolling.length()));
+        List<String> strings = Arrays.asList("fdsa");
+        System.out.println(strings.get(0));
+
+        String rolling = "AP111";
+        System.out.println(rolling.substring(4));
 
         String str1 = "MA-M04";
         String str2 = "MA-M10";
