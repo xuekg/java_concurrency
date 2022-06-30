@@ -12,11 +12,19 @@ public class Movie {
     public static final int CHILDRENS = 2;
 
     private String title;
-    private int priceCode;
+    private Price price;
+
+    public double getCharge(int dayRented) {
+        return price.getCharge(dayRented);
+    }
+
+    public int getFrequentRenterPoints(int dayRented) {
+        return price.getFrequentRenterPoints(dayRented);
+    }
 
     public Movie(String title, int priceCode) {
         this.title = title;
-        this.priceCode = priceCode;
+        setPriceCode(priceCode);
     }
 
     public String getTitle() {
@@ -28,10 +36,22 @@ public class Movie {
     }
 
     public int getPriceCode() {
-        return priceCode;
+        return price.getPriceCode();
     }
 
-    public void setPriceCode(int priceCode) {
-        this.priceCode = priceCode;
+    public void setPriceCode(int arg) {
+        switch (arg) {
+            case REGULAR:
+                price = new RegularPrice();
+                break;
+            case CHILDRENS:
+                price = new ChildrenPrice();
+                break;
+            case NEW_RELEASE:
+                price = new RegularPrice();
+                break;
+            default:
+                throw new IllegalArgumentException("incorrect price code");
+        }
     }
 }

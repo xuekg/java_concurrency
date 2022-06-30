@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
 public class SubStrTest {
 
     public static void main(String[] args) {
+        List<Integer> integers = null;
+        integers.stream().forEach(item -> System.out.println(item));
+        
         List<String> strings = Arrays.asList("fdsa");
         System.out.println(strings.get(0));
 
